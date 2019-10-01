@@ -130,6 +130,11 @@ end
 Parms_Para = Parms_Para(Parms_Para ~= 0); % Getting rid of the zero's
 Parms_Prey = Parms_Prey(Parms_Prey ~= 0); 
 
+Min_Para_Die = min(Parms_Para);
+Max_Para_Die = max(Parms_Para);
+Min_Prey_2 = min(Parms_Prey);
+Max_Prey_2 = max(Parms_Prey);
+
 figure;
 subplot(1,2,1)
 boxplot(Parms_Para','Labels',{'Parasites ==> 0'})
@@ -147,7 +152,7 @@ ylabel('Value of k3')
 
 % Defining sweep variables
 
-n = 51;
+n = 100;
 k3 = linspace(0,50,n);
 k4 = linspace(0,50,n);
 Parms_Para_c = zeros(n*n,2);  % Storing succesful parameters in an array
@@ -170,7 +175,86 @@ for j = 1:n
     end
 end
 
+%% The Plotting %%
+
+x = linspace(0,50,200);  % For Plotting (x = y) curve
+
+figure;
+subplot(1,2,1)
+scatter(Parms_Para_c(:,1),Parms_Para_c(:,2))
+hold on
+plot(x,x)
+grid on
+grid minor
+title('Parasite ==> 0')
+xlabel('k3')
+ylabel('k4')
+legend('Successfull Parameter Pairs','y = x (k3 = k4)','Location','southeast')
+subplot(1,2,2)
+scatter(Parms_Prey_c(:,1),Parms_Prey_c(:,2))
+hold on
+plot(2*x,x)
+xlim([0,50])
+grid on
+grid minor
+title('Prey ==> 2')
+xlabel('k3')
+ylabel('k4')
+legend('Successfull Parameter Pairs','y = x/2 (k3 = k4/2)','Location','northwest')
+
 %% Part 1 d) %%
+% Paired parameter sweep k4 and k5
+
+% Defining sweep variables
+
+n = 100;
+k3 = 10;
+k4 = linspace(0,50,n);
+k5 = linspace(0,50,n);
+Parms_Para_d = zeros(n*n,2);  % Storing succesful parameters in an array
+Parms_Prey_d = zeros(n*n,2);
+
+
+for j = 1:n
+    for i = 1:n
+        f = @(t,y) Parasite(t,y,k1,k2,k3,k4(i),k5(j));
+        [t,y] = ode45(f,tspan,y0);
+        if ((y(end,1) < Tol) && y(end,2) > Tol) % Stores succesfull paramters for Para => 0
+            Parms_Para_d(i*j,1) = k4(i);
+            Parms_Para_d(i*j,2) = k5(j);
+        end
+        if (abs(y(end,2) - 2) < Tol)  % Stores succesfull paramters for Prey => 2
+            Parms_Prey_d(i*j,1) = k4(i);
+            Parms_Prey_d(i*j,2) = k5(j);
+            
+        end
+    end
+end
+
+%% The Plotting for d) %%
+
+figure;
+subplot(1,2,1)
+scatter(Parms_Para_d(:,1),Parms_Para_d(:,2))
+hold on
+grid on
+grid minor
+title('Parasite ==> 0')
+xlabel('k4')
+ylabel('k5')
+subplot(1,2,2)
+scatter(Parms_Prey_d(:,1),Parms_Prey_d(:,2))
+hold on
+xlim([0,50])
+grid on
+grid minor
+title('Prey ==> 2')
+xlabel('k4')
+ylabel('k5')
+
+
+
+
 
 
 
