@@ -84,6 +84,7 @@ function [new_map, para_array, food_array] = para_step(map, para_array, food_arr
             para_array(size(para_array, 1), 3) = col;
             
             % Food cell cleared in map update step
+            
         
         % Cell empty (0)
         else
