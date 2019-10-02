@@ -5,7 +5,11 @@ Tol = 1e-2;
 k1 = 1;
 k2 = 2;
 n = 50; % n should equal how many lines in your (k3,k4,k5) storage vector
-
+T = 20;
+tspan = [0,T];
+X_1_0 = 1;
+X_2_0 = 1;
+y0 = [X_1_0, X_2_0];
 
 % If you store the LHS output as 3D vector use this
 % Parms(:,1) should be k3 Parms(:,2) k4 and Parms(:,3) k5
