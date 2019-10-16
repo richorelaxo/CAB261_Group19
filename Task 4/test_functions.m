@@ -49,16 +49,16 @@ imshow(col_map, 'InitialMagnification', 'Fit');
 
 %% Full loop test
 
-myVideo = VideoWriter('Parasite')
-open(myVideo)
+% myVideo = VideoWriter('Parasite')
+% open(myVideo)
 
 M = 200;
 N = 200;
-pop_dens = 0.3;
+pop_dens = 0.2;         %10, 20, 30, 40[%]
 food_growth = false;
-f_th = 0.01;
-p_ttl = 7;
-new_food = 500;
+f_th = 0.07;            % (0, 0.1)
+p_ttl = 10;              % [0,15]
+new_food = 400;         % 100, 200, 300, 400
 
 pop_cnts = zeros(1,2);
 
@@ -90,17 +90,24 @@ for i = 1:M
     
     % Visualize map
     col_map = mapcolour(map);
+    
+    subplot(1, 2, 1)
     imshow(col_map, 'InitialMagnification', 'Fit');
     title(['n = ', num2str(i)]);
     
-    frame = getframe; % get the frame
-    writeVideo(myVideo, frame) % write the frame to the video
+    subplot(1, 2, 2)
+    plot(1:1:size(pop_cnts, 1), pop_cnts(:,1), 'b')
+    hold on
+    plot(1:1:size(pop_cnts, 1), pop_cnts(:,2), 'g')
+    legend('Parasites', 'Food', 'Location', 'NorthEast')
+%     frame = getframe; % get the frame
+%     writeVideo(myVideo, frame) % write the frame to the video
     
     pause(0.3);
     
 end
 
-close(myVideo); % close the video file
+%close(myVideo); % close the video file
 %%
 figure
 plot(1:1:size(pop_cnts, 1), pop_cnts(:,1), 'b')
