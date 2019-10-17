@@ -17,7 +17,7 @@
 function [map, para_array, food_array] = init_array(N, pop_dens, food_growth, p_ttl)
     
     % Population # of parasites and food
-    pop = N^2 * pop_dens;
+    pop = round(N^2 * pop_dens);
     
     % Initialize map array
     map = zeros(N);
@@ -36,7 +36,7 @@ function [map, para_array, food_array] = init_array(N, pop_dens, food_growth, p_
     if food_growth == false
         [map, food_array] = random_placement(map, food_array);
     else
-        %TBD
+        [map, food_array] = local_placement(map, food_array);
     end 
         
 end %end function

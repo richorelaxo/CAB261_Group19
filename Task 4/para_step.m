@@ -16,14 +16,15 @@
 % Outputs:
 %    map = new map with ONLY next parasites placed.
 %
-function [new_map, para_array, food_array] = para_step(map, para_array, food_array, p_ttl)
+function [new_map, para_array, food_array, cell_array] = para_step(map, para_array, food_array, p_ttl)
     
     % Initialize local variables
-    N = length(map);
+    N = size(map,1);
     new_map = zeros(N);
     
     % random order of parasites to reduce sequential bias
     rand_order = randperm(size(para_array, 1)); 
+    cell_array = zeros(size(para_array,1),1); % TESTING
     
     % parasite loop
     for i = rand_order
@@ -62,16 +63,17 @@ function [new_map, para_array, food_array] = para_step(map, para_array, food_arr
         
         %%% Check cell at next step on map %%%
         [~, cell] = cell_occupied(map, nrow, ncol);        
+        cell_array(i, 1) = cell;
         
         % Cell occupied by P
-        if cell > 0
+        if cell == 1
            
             %coords remain the same, decrement ttl
             para_array(i, 1) = para_array(i, 1) - 1;
             
             
         % Cell occupied by F
-        elseif cell < 0
+        elseif cell == -1
             
             % Move to new coords, decrement ttl
             para_array(i, 1) = para_array(i, 1) - 1;
@@ -83,16 +85,19 @@ function [new_map, para_array, food_array] = para_step(map, para_array, food_arr
             para_array(size(para_array, 1), 2) = row;
             para_array(size(para_array, 1), 3) = col;
             
-            % Food cell cleared in map update step
-            
+            % Food cell -> para cell to more births at coord
+            map(nrow, ncol) = 1;            
         
         % Cell empty (0)
-        else
+        elseif cell == 0
             
             % move to new coords, decrement ttl
             para_array(i, 1) = para_array(i, 1) - 1;
             para_array(i, 2) = nrow;
-            para_array(i, 3) = ncol;          
+            para_array(i, 3) = ncol;
+            
+            % empty cell -> para cell to more moves at coord
+            map(nrow, ncol) = 1;
             
         end% end step conditions
         
@@ -104,7 +109,6 @@ function [new_map, para_array, food_array] = para_step(map, para_array, food_arr
             para_array(d,:) = [];
         end
     end
-   
         
     % Add parasites to new_map
     for p = 1:size(para_array, 1)        

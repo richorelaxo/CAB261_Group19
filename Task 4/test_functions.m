@@ -1,9 +1,8 @@
 % Test functions
-N = 10;
+N = 200;
 pop_dens = 0.3;
-food_growth = false;
+food_growth = true;
 p_ttl = 3;
-
 
 [map, para_array, food_array] = init_array(N, pop_dens, food_growth, p_ttl);
 [para_cnt, food_cnt] = pop_cnt(map);
@@ -13,11 +12,15 @@ imshow(col_map, 'InitialMagnification', 'Fit');
 
 
 %% Test para step
-[map, para_array, food_array] = para_step(map, para_array, food_array, p_ttl);
+para_array0 = para_array;
+
+[map, para_array, food_array, cell_array] = para_step(map, para_array, food_array, p_ttl);
 [para_cnt, food_cnt] = pop_cnt(map);
 
 col_map = mapcolour(map);
 imshow(col_map, 'InitialMagnification', 'Fit');
+
+%comp_array = [para_array [cell_array; zeros((size(para_array,1) - size(cell_array,1)),1)]];
 
 %% Test food map update
 
@@ -49,15 +52,16 @@ imshow(col_map, 'InitialMagnification', 'Fit');
 
 %% Full loop test
 
-% myVideo = VideoWriter('Parasite')
-% open(myVideo)
+ myVideo = VideoWriter('Parasite');
+ myVideo.FrameRate = 5;
+ open(myVideo)
 
 M = 200;
 N = 200;
-pop_dens = 0.2;         %10, 20, 30, 40[%]
-food_growth = false;
-f_th = 0.07;            % (0, 0.1)
-p_ttl = 10;              % [0,15]
+pop_dens = 0.3;         %10, 20, 30, 40[%]
+food_growth = true;
+f_th = 0.05;            % (0, 0.1)
+p_ttl = 15;              % [0,15]
 new_food = 400;         % 100, 200, 300, 400
 
 pop_cnts = zeros(1,2);
@@ -91,23 +95,23 @@ for i = 1:M
     % Visualize map
     col_map = mapcolour(map);
     
-    subplot(1, 2, 1)
+    %subplot(1, 2, 1)
     imshow(col_map, 'InitialMagnification', 'Fit');
     title(['n = ', num2str(i)]);
     
-    subplot(1, 2, 2)
-    plot(1:1:size(pop_cnts, 1), pop_cnts(:,1), 'b')
-    hold on
-    plot(1:1:size(pop_cnts, 1), pop_cnts(:,2), 'g')
-    legend('Parasites', 'Food', 'Location', 'NorthEast')
-%     frame = getframe; % get the frame
-%     writeVideo(myVideo, frame) % write the frame to the video
+%     subplot(1, 2, 2)
+%     plot(1:1:size(pop_cnts, 1), pop_cnts(:,1), 'b')
+%     hold on
+%     plot(1:1:size(pop_cnts, 1), pop_cnts(:,2), 'g')
+%     legend('Parasites', 'Food', 'Location', 'NorthEast')
+     frame = getframe; % get the frame
+     writeVideo(myVideo, frame) % write the frame to the video
     
-    pause(0.3);
+    pause(0.1);
     
 end
 
-%close(myVideo); % close the video file
+close(myVideo); % close the video file
 %%
 figure
 plot(1:1:size(pop_cnts, 1), pop_cnts(:,1), 'b')
