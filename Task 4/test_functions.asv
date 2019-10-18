@@ -59,10 +59,10 @@ imshow(col_map, 'InitialMagnification', 'Fit');
 M = 200;
 N = 200;
 pop_dens = 0.3;         %10, 20, 30, 40[%]
-food_growth = true;    % false = random, true = localised
-f_th = 0.05;            % (0, 0.1)
-p_ttl = 12;              % [0,15]
-new_food = 300;         % 100, 200, 300, 400
+food_growth = false;    % false = random, true = localised
+f_th = 0.01;            % (0, 0.1)
+p_ttl = 15;              % [0,15]
+new_food = 400;         % 100, 200, 300, 400
 
 pop_cnts = zeros(1,2);
 
@@ -118,5 +118,5 @@ plot(1:1:size(pop_cnts, 1), pop_cnts(:,1), 'b')
 hold on
 plot(1:1:size(pop_cnts, 1), pop_cnts(:,2), 'g')
 legend('Parasites', 'Food', 'Location', 'NorthEast')
-title(['Pop''n Dens ', num2str(pop_dens), ', fd thr ', num2str(f_th), ', para ttl ', num2str(p_ttl), ', new food ', num2str(new_food) ]);
+title(['Pop''n Density ', num2str(pop_dens), ' f_th', num2str(pop_dens), ', p_ttl', , 'f3', ]);
 
