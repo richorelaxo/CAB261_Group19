@@ -3,11 +3,11 @@ clear
 
 % Initialisations
 n = 50;             % max range
-stepSize = 0.1;       % step size
+stepSize = 2;       % step size
 
 sampleLength = n*stepSize;  % size of each array/ no of samples to be taken
 
-its = 100000;
+its = 100;
 
 Parms = zeros(sampleLength*its, 3);
 
@@ -40,13 +40,7 @@ for j = 1:its
         k4(i) = (k4Nums(i)) + (rng*rand());
         k5(i) = (k5Nums(i)) + (rng*rand());
     end
-    
-    % store the parameters
-%     if j == 1
-%         Parms = [k3, k4, k5];
-%     else
-%         Parms = Parms + [k3, k4, k5];
-%     end
+
      index = 1+(j-1)*sampleLength:sampleLength+(j-1)*sampleLength;
      Parms(index,:) = [k3, k4, k5];
     
@@ -75,7 +69,7 @@ y0 = [X_1_0, X_2_0];
 j = 1;
 k = 1;
 
-for i = 1:n
+for i = 1:length(Parms)
     
     % solve ode
     [t,y] = parasitesFn(Parms(i,1), Parms(i,2), Parms(i,3));
@@ -101,12 +95,12 @@ end % end step through all
 
 %% Visuals
 
-% % plane calcs
-% [x, y] = meshgrid(0:1:50);
-% z = 1.25.*x;
-% 
-% [x1, z1] = meshgrid(0:1:50);
-% y1 = 0.5.*x1;
+% plane calcs
+[x, y] = meshgrid(0:1:50);
+z = 1.25.*x;
+
+[x1, z1] = meshgrid(0:1:50);
+y1 = 0.5.*x1;
 
 %%
 figure(1)
@@ -119,27 +113,27 @@ xlabel("k1")
 ylabel("k2")
 zlabel("k3")
 xlim([0 50]); ylim([0 50]); zlim([0 50])
-% hold on
-% ff = surf(x,y,z)
-% set(ff, 'edgecolor','none','facecolor',[.9 .9 .9], 'FaceAlpha', 0.8)
-% hold on
-% gg = surf(x1,y1,z1)
-% grid on
-% set(gg, 'edgecolor','none','facecolor',[.75 .75 .75], 'FaceAlpha', 0.8)
+hold on
+ff = surf(x,y,z)
+set(ff, 'edgecolor','none','facecolor',[.9 .9 .9], 'FaceAlpha', 0.8)
+hold on
+gg = surf(x1,y1,z1)
+grid on
+set(gg, 'edgecolor','none','facecolor',[.75 .75 .75], 'FaceAlpha', 0.8)
 
-% legend("X1 -> 0", "X2 -> 2", "z = 1.25x", "y = 0.5x")
+legend("X1 -> 0", "X2 -> 2", "z = 1.25x", "y = 0.5x")
 
 
 
 %%
-figure(2) 
-for i = 1:length(Parms_X1(:,1))
-    [t1, y1] = parasitesFn(Parms_X1(i,1), Parms_X1(i,2), Parms_X1(i,3));
-    plot(t1,y1(:,1))
-    legend( "X1")
-    title("X1 to 0")
-    hold on
-end
+% figure(2)
+% for i = 1:length(Parms_X1(:,1))
+%     [t1, y1] = parasitesFn(Parms_X1(i,1), Parms_X1(i,2), Parms_X1(i,3));
+%     plot(t1,y1(:,1))
+%     legend( "X1")
+%     title("X1 to 0")
+%     hold on
+% end
 
 
 
