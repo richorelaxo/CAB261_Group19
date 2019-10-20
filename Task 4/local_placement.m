@@ -6,8 +6,8 @@ function [map, array] = local_placement(map, array)
     [para_cnt, ~] = pop_cnt(map);
     
     %set quadrant bounds based on array size
-    if size(array, 1) > (N/2)^2
-        mid_bnd = round(sqrt(N^2-para_cnt));
+    if size(array, 1) > 1000
+        mid_bnd = round(sqrt(para_cnt*2+1000)); %N^2-para_cnt
     else
         mid_bnd = N/2;
     end
