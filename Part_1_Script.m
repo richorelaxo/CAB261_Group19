@@ -110,17 +110,17 @@ legend("Pred (Parasite)","Prey")
 
 n = 201;
 k3 = linspace(0,50,n);
-Tol = 1e-2;
+Tol = 1e-1;
 Parms_Para = zeros(1,n);
 Parms_Prey = zeros(1,n);
 
 for i = 1:n
     f = @(t,y) Parasite(t,y,k1,k2,k3(i),k4,k5);
     [t,y] = ode45(f,tspan,y0);
-    if ((y(end,1) < Tol) && y(end,2) > Tol) % Stores succesfull paramters for Para => 0
+    if ((y(end,1) < Tol) && (y(end,1) > 0) && (y(end,2) > 0)) % Stores succesfull paramters for Para => 0
         Parms_Para(i) = k3(i);
     end
-    if (abs(y(end,2) - 2) < Tol)  % Stores succesfull paramters for Prey => 2
+    if ((abs(y(end,2) - 2) < Tol) && (y(end,1) > 0))  % Stores succesfull paramters for Prey => 2
       Parms_Prey(i) = k3(i);  
     end
 end
@@ -147,29 +147,71 @@ title('Parameter Sweep Parasite Model')
 xlabel('System Dynamics')
 ylabel('Value of k3')
 
+%% Plot style 2 %% 
+
+y1 = ones(length(Parms_Para));
+y2 = ones(length(Parms_Prey));
+%%%
+figure;
+subplot(1,2,1)
+plot(Parms_Para',y1,'b*','LineWidth',2)
+set(gca,'YTickLabel',[]);
+title('Parameter Sweep Parasite Model')
+ylabel('System Dynamics Parasites ==> 0')
+xlabel('Value of k3')
+grid on 
+grid minor
+subplot(1,2,2)
+plot(Parms_Prey',y2,'r*','LineWidth',2)
+set(gca,'YTickLabel',[]);
+title('Parameter Sweep Parasite Model')
+ylabel('System Dynamics Prey ==> 2')
+xlabel('Value of k3')
+grid on
+grid minor
+
+%% Plot Style 3 k3 Sweep
+
+figure();
+plot(Parms_Para',y1,'.','MarkerSize',12)
+hold on
+plot(Parms_Prey',y2,'r.', 'MarkerSize',12)
+legend('Parasites ==> 0','Prey ==> 2','Location','northeast')
+xlabel('Value of k3')
+grid on
+grid minor
+ax = gca;
+ax.FontSize = 12;
+set(gca,'YTickLabel',[]);
+title({'System Dynamics with varying k3 values';'Fixed k1 = 1 ,k2 = 2,k4 = 4 ,k5 = 3'})
+txt = {'Range for Prey ==> 2';'[7.75,50]'};
+text(25,1.2,txt,'FontSize',12)
+txt2 = {'Range for Para ==> 0';'[0.25,8.0]'};
+text(0.5,1.2,txt2,'FontSize',12)
+
 %% Part 1 c) %%
 % Paired parameter sweep k3 and k4
 
 % Defining sweep variables
 
-n = 100;
+n = 150;
 k3 = linspace(0,50,n);
 k4 = linspace(0,50,n);
-Parms_Para_c = zeros(n*n,2);  % Storing succesful parameters in an array
-Parms_Prey_c = zeros(n*n,2);
+Parms_Para_c = [0,0];  % Storing succesful parameters in an array
+Parms_Prey_c = [0,0];
 
 
 for j = 1:n
     for i = 1:n
         f = @(t,y) Parasite(t,y,k1,k2,k3(i),k4(j),k5);
         [t,y] = ode45(f,tspan,y0);
-        if ((y(end,1) < Tol) && y(end,2) > Tol) % Stores succesfull paramters for Para => 0
-            Parms_Para_c(i*j,1) = k3(i);
-            Parms_Para_c(i*j,2) = k4(j);
+        if ((y(end,1) < Tol)&& (y(end,1) > 0) && (y(end,2) > 0)) % Stores succesfull paramters for Para => 0
+            Parms_Para_c(end+1,1) = k3(i);
+            Parms_Para_c(end,2) = k4(j);
         end
-        if (abs(y(end,2) - 2) < Tol)  % Stores succesfull paramters for Prey => 2
-            Parms_Prey_c(i*j,1) = k3(i);
-            Parms_Prey_c(i*j,2) = k4(j);
+        if ((abs(y(end,2) - 2) < Tol) && (y(end,1) > 0))  % Stores succesfull paramters for Prey => 2
+            Parms_Prey_c(end+1,1) = k3(i);
+            Parms_Prey_c(end,2) = k4(j);
             
         end
     end
@@ -177,59 +219,83 @@ end
 
 %% The Plotting %%
 
+%Parms_Para_c(1,1) = [];
+%Parms_Prey_c(1,1) = [];
 x = linspace(0,50,200);  % For Plotting (x = y) curve
 
 figure;
 subplot(1,2,1)
 scatter(Parms_Para_c(:,1),Parms_Para_c(:,2))
 hold on
-plot(x,x)
-grid on
-grid minor
-title('Parasite ==> 0')
-xlabel('k3')
-ylabel('k4')
-legend('Successfull Parameter Pairs','y = x (k3 = k4)','Location','southeast')
-subplot(1,2,2)
-scatter(Parms_Prey_c(:,1),Parms_Prey_c(:,2))
-hold on
-plot(2*x,x)
+plot(1.9*x,x,'LineWidth',2)
 xlim([0,50])
 grid on
 grid minor
-title('Prey ==> 2')
-xlabel('k3')
-ylabel('k4')
-legend('Successfull Parameter Pairs','y = x/2 (k3 = k4/2)','Location','northwest')
+title('Parasite ==> 0','FontSize',16)
+xlabel('k3','FontSize',16)
+ylabel('k4','FontSize',16)
+legend('Successfull Parameter Pairs','1.9y = x','FontSize',14,'Location','southeast')
+subplot(1,2,2)
+scatter(Parms_Prey_c(:,1),Parms_Prey_c(:,2))
+hold on
+plot(1.9*x,x,'LineWidth',2)
+xlim([0,50])
+grid on
+grid minor
+title('Prey ==> 2','FontSize',16)
+xlabel('k3','FontSize',16)
+ylabel('k4','FontSize',16)
+legend('Successfull Parameter Pairs','1.9y = x','FontSize',14,'Location','northwest')
+
+
+%% Plot Take 2 %%
+
+figure;
+scatter(Parms_Para_c(:,1),Parms_Para_c(:,2))
+hold on
+scatter(Parms_Prey_c(:,1),Parms_Prey_c(:,2))
+plot(1.9*x,x,'g-','LineWidth',2)
+xlim([0,50])
+grid on
+grid minor
+title('System Dynamics','FontSize',16)
+xlabel('k3','FontSize',16)
+ylabel('k4','FontSize',16)
+legend('Parasite ==> Tol','Prey ==> 2','1.9y = x','FontSize',16)
+
 
 %% Part 1 d) %%
 % Paired parameter sweep k4 and k5
 
 % Defining sweep variables
 
-n = 100;
+n = 150;
 k3 = 10;
 k4 = linspace(0,50,n);
 k5 = linspace(0,50,n);
-Parms_Para_d = zeros(n*n,2);  % Storing succesful parameters in an array
-Parms_Prey_d = zeros(n*n,2);
+Parms_Para_d = [0 0];
+Parms_Prey_d = [0 0];
 
 
 for j = 1:n
     for i = 1:n
         f = @(t,y) Parasite(t,y,k1,k2,k3,k4(i),k5(j));
         [t,y] = ode45(f,tspan,y0);
-        if ((y(end,1) < Tol) && y(end,2) > Tol) % Stores succesfull paramters for Para => 0
-            Parms_Para_d(i*j,1) = k4(i);
-            Parms_Para_d(i*j,2) = k5(j);
+        if ((y(end,1) < Tol)&& (y(end,1) > 0) && (y(end,2) > 0)) % Stores succesfull paramters for Para => 0
+            Parms_Para_d(end+1,1) = k4(i);
+            Parms_Para_d(end,2) = k5(j);
         end
-        if (abs(y(end,2) - 2) < Tol)  % Stores succesfull paramters for Prey => 2
-            Parms_Prey_d(i*j,1) = k4(i);
-            Parms_Prey_d(i*j,2) = k5(j);
+        if ((abs(y(end,2) - 2) < Tol) && (y(end,1) > 0))  % Stores succesfull paramters for Prey => 2
+            Parms_Prey_d(end+1,1) = k4(i);
+            Parms_Prey_d(end,2) = k5(j);
             
         end
     end
 end
+
+%Parms_Para_d(1,1) = [];
+%Parms_Prey_d(1,1) = [];
+
 
 %% The Plotting for d) %%
 
@@ -251,6 +317,20 @@ grid minor
 title('Prey ==> 2')
 xlabel('k4')
 ylabel('k5')
+
+%% Plot Type 2 %%
+
+figure;
+scatter(Parms_Para_d(:,1),Parms_Para_d(:,2),'gs')
+hold on
+scatter(Parms_Prey_d(:,1),Parms_Prey_d(:,2),'bo')
+grid on
+grid minor
+xline(5.2,'r','LineWidth',2)
+title('System Dynamics k4 and k4 Sweep','FontSize',16)
+xlabel('k4','FontSize',16)
+ylabel('k5','FontSize',16)
+legend('Parasite ==> Tol','Prey ==> 2','x = 5.2','FontSize',16)
 
 
 
