@@ -13,7 +13,7 @@ steps = 2000;
 s = linspace(0,400,9);
 
 
-%% Testing with a for loop %%
+%% Testing model with a for loop %%
 
 
 x = zeros(length(s),steps);
@@ -29,10 +29,14 @@ for j = 1:length(s)
     end
 end
 
+% Defining timescale for x-axis
+
+Times = linspace(0,h*steps,steps +1);
+
 figure;
 for m = 1:length(s)    
     subplot(3,3,m)
-    plot(x(m,:))
+    plot(Times,x(m,:))
     hold on
     grid on
     grid minor
@@ -41,10 +45,21 @@ for m = 1:length(s)
         ylabel('Population Count')
     end
     if m > 6
-        xlabel('No. of Time Steps')
+        xlabel('Time Units')
     end
 end
 
+%% Oberved Plots of Period Delays %%
+
+Delays = [2.5,4,6.8,11.5];
+figure();
+plot(Delays)
+hold on
+grid on
+grid minor
+xlabel('Delay Time')
+ylabel('Period of Oscillation')
+title('Period Relation to Model Delay Time')
 
 %% Repeating new r and new h %%
 
@@ -64,10 +79,13 @@ for j = 1:length(s)
     end
 end
 
+% Defining Time-x-axis for new step size
+Times = linspace(0,h*steps,steps+1);
+
 figure;
 for m = 1:length(s)    
     subplot(3,3,m)
-    plot(x(m,:))
+    plot(Times,x(m,:))
     hold on
     grid on
     grid minor
@@ -76,9 +94,23 @@ for m = 1:length(s)
         ylabel('Population Count')
     end
     if m > 6
-        xlabel('No. of Time Steps')
+        xlabel('Time Units')
     end
 end
+
+%% Oberved Plots of Period Delays %%
+
+Delays = [10,30,40,70];
+plot(Delays)
+figure();
+plot(Delays)
+hold on
+grid on
+grid minor
+xlabel('Delay Time')
+ylabel('Period of Oscillation')
+title('Period Relation to Model Delay Time')
+
 
 %% Part 1 b) %%
 % 2D Representation
@@ -110,7 +142,7 @@ legend("Pred (Parasite)","Prey")
 
 n = 201;
 k3 = linspace(0,50,n);
-Tol = 1e-1;
+Tol = 1e-2;
 Parms_Para = zeros(1,n);
 Parms_Prey = zeros(1,n);
 
@@ -184,9 +216,9 @@ ax = gca;
 ax.FontSize = 12;
 set(gca,'YTickLabel',[]);
 title({'System Dynamics with varying k3 values';'Fixed k1 = 1 ,k2 = 2,k4 = 4 ,k5 = 3'})
-txt = {'Range for Prey ==> 2';'[7.75,50]'};
+txt = {'Range for Prey ==> 2';'[8,50]'};
 text(25,1.2,txt,'FontSize',12)
-txt2 = {'Range for Para ==> 0';'[0.25,8.0]'};
+txt2 = {'Range for Para ==> 0';'[0.25,7.25]'};
 text(0.5,1.2,txt2,'FontSize',12)
 
 %% Part 1 c) %%
@@ -219,9 +251,8 @@ end
 
 %% The Plotting %%
 
-%Parms_Para_c(1,1) = [];
-%Parms_Prey_c(1,1) = [];
-x = linspace(0,50,200);  % For Plotting (x = y) curve
+
+x = linspace(0,50,200);  % For Plotting (x = 1.9y) curve
 
 figure;
 subplot(1,2,1)
@@ -292,9 +323,6 @@ for j = 1:n
         end
     end
 end
-
-%Parms_Para_d(1,1) = [];
-%Parms_Prey_d(1,1) = [];
 
 
 %% The Plotting for d) %%
