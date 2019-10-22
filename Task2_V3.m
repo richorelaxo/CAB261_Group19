@@ -1,13 +1,14 @@
 %% Task 2 - Latin Hypercube Sampling
+% Bridget McCarron n9962263
+
 clear
 
 % Initialisations
 n = 50;             % max range
-stepSize = 2;       % step size
+spacingFactor = 10;       % step size
 
-sampleLength = n*stepSize;  % size of each array/ no of samples to be taken
-
-its = 100;
+sampleLength = n*spacingFactor;  % size of each array/ no of samples to be taken
+its = 100;         % number of iterations
 
 Parms = zeros(sampleLength*its, 3);
 
@@ -32,7 +33,7 @@ for j = 1:its
     for i = 1:length(k3Nums)
         
         % calculate the range between the vertices of the cube
-        rng = 1/ stepSize;
+        rng = 1/ spacingFactor;
         
         % calculate a random number and to add to bottom array vertice
         % random number will be between the two vertices
@@ -40,8 +41,11 @@ for j = 1:its
         k4(i) = (k4Nums(i)) + (rng*rand());
         k5(i) = (k5Nums(i)) + (rng*rand());
     end
-
+     
+     % index within Parms
      index = 1+(j-1)*sampleLength:sampleLength+(j-1)*sampleLength;
+     
+     % update Parms with new 3-tuple of parameters
      Parms(index,:) = [k3, k4, k5];
     
 end
@@ -50,22 +54,8 @@ end
 
 % tolerance
 Tol = 1e-2;
-% set parameters
-k1 = 1;         
-k2 = 2;
-% timespan for ode45 to solve over
-T = 20;
-tspan = [0,T];
-% initial values
-X_1_0 = 1;      
-X_2_0 = 1;
-y0 = [X_1_0, X_2_0];
 
-% initialise storage of successful parameters for two conditions
-% Parms_X1 = zeros(n,3);
-% Parms_X2 = zeros(n,3);
-
-% initialise counters  
+% initialise position index  
 j = 1;
 k = 1;
 
@@ -76,64 +66,106 @@ for i = 1:length(Parms)
     
     if ~any(y < 0) % check it doesn't fall below 0
         
-        if ((y(end,1) < Tol)) %&& y(end,2) > Tol) % Check for X1 => 0 at end
+        if ((y(end,1) < Tol)) % Check for X1 => 0 at end
             
             % store if successful
-            Parms_X1(j,:) = Parms(i,:);
-            j = j+1;
+            Parms_X1(j,:) = Parms(i,:); 
+            % move indexer to next position
+            j = j+1;       
+            
         end % end check for X1 => 0
         
-        if (abs(y(end,2) - 2) < Tol)  % Checks for X2 => 2 at end
-            % store if successful
-           Parms_X2(k,:) = Parms(i,:);
+        if (abs(y(end,2) - 2) < Tol) % Checks for X2 => 2 at end
+           
+           % store if successful 
+           Parms_X2(k,:) = Parms(i,:); 
+           % move indexer to next position
            k = k+1;
+           
         end % end check for X2 => 2
         
     end % end check for >= 0
     
 end % end step through all
 
-%% Visuals
+%% Calculations for planes at Boundaries
 
-% plane calcs
+% Boundary 1
 [x, y] = meshgrid(0:1:50);
 z = 1.25.*x;
 
+% Boundary 2
 [x1, z1] = meshgrid(0:1:50);
 y1 = 0.5.*x1;
 
-%%
+%% Visualise 
 figure(1)
-grid on
-pp = plot3(Parms_X1(:,1), Parms_X1(:,2), Parms_X1(:,3), 'b.', ...
-    Parms_X2(:,1), Parms_X2(:,2), Parms_X2(:,3), 'r.');
-pp(1).MarkerSize = 8;
-pp(2).MarkerSize = 8;
-xlabel("k1")
-ylabel("k2")
-zlabel("k3")
+
+% scatter(X,Y,Z) = scatter(k3,k4,k5)
+pp = scatter3(Parms_X1(:,1), Parms_X1(:,2), Parms_X1(:,3), 'b.');
+pp.MarkerEdgeAlpha = 0.4;
+pp.MarkerFaceAlpha = 0.4;
+
+hold on
+% scatter(X,Y,Z) = scatter(k3,k4,k5)
+hh = scatter3(Parms_X2(:,1), Parms_X2(:,2), Parms_X2(:,3), 'r.');
+hh.MarkerEdgeAlpha = 0.4;
+hh.MarkerFaceAlpha = 0.4;
+
+xlabel("k3")
+ylabel("k4")
+zlabel("k5")
 xlim([0 50]); ylim([0 50]); zlim([0 50])
+
 hold on
-ff = surf(x,y,z)
+% "z = 1.25x  (k5 = 1.25k3)"
+ff = surf(x,y,z);
 set(ff, 'edgecolor','none','facecolor',[.9 .9 .9], 'FaceAlpha', 0.8)
+
 hold on
-gg = surf(x1,y1,z1)
-grid on
+% "y = 0.5x (k4 = 0.5k3)"
+gg = surf(x1,y1,z1);
 set(gg, 'edgecolor','none','facecolor',[.75 .75 .75], 'FaceAlpha', 0.8)
 
-legend("X1 -> 0", "X2 -> 2", "z = 1.25x", "y = 0.5x")
+leg = legend({"$X1 \Rightarrow 0$", "$X2 \Rightarrow 2$", ...
+    "y = 0.5x (k4 = 0.5k3)","z = 1.25x  (k5 = 1.25k3)"}, ...
+    "Interpreter", "Latex");
 
+title({'Boundaries between regions','of interesting system dynamics'},...
+    'Interpreter', 'latex', 'FontSize', 14);
 
+% "z = 1.25x  (k5 = 1.25k3)"
+% "y = 0.5x (k4 = 0.5k3)"
 
-%%
+box on
+grid on
+ax = gca;
+ax.TickLabelInterpreter = "Latex";
+leg.Interpreter = "Latex";
+leg.FontSize = 12;
+
+%% Additional Plots
+
+% Check X1 values are going to 0
 % figure(2)
-% for i = 1:length(Parms_X1(:,1))
+% for i = 1:80
 %     [t1, y1] = parasitesFn(Parms_X1(i,1), Parms_X1(i,2), Parms_X1(i,3));
 %     plot(t1,y1(:,1))
-%     legend( "X1")
-%     title("X1 to 0")
+%     title({"$X1 \Rightarrow 0$"}, "Interpreter", "Latex", "FontSize", 16)
 %     hold on
 % end
+
+%%
+% Check X2 values are going to 2
+% figure(3)
+% for i = 1:80
+%     [t1, y1] = parasitesFn(Parms_X2(i,1), Parms_X2(i,2), Parms_X2(i,3));
+%     plot(t1,y1(:,2))
+%     title({"$X2 \Rightarrow 2$"}, "Interpreter", "Latex", "FontSize", 16)
+%     hold on
+% end
+
+
 
 
 

@@ -10,6 +10,8 @@ function [t, y] = parasitesFn(k3, k4, k5)
 
 % y contains a vector [X1, X2]
 
+% Bridget McCarron n9962263
+
 % T = 20 time units
 tspan = [0 20];
 
