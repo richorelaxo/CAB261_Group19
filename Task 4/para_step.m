@@ -15,6 +15,7 @@
 %
 % Outputs:
 %    map = new map with ONLY next parasites placed.
+%    para_array = vector with parasite coordinates
 %
 function [new_map, para_array, food_array, cell_array] = para_step(map, para_array, food_array, p_ttl)
     

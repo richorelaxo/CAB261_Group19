@@ -1,3 +1,16 @@
+% Function:
+%    food_dies removes 
+%    
+%   
+% Input parameters:
+%    array = array to check.
+%    row = row of array to check.
+%    col = col of array to check.
+%
+% Outputs:
+%    map = 
+%    
+
 function [map, food_array] = food_dies(map, food_array, f_th)
 
 % Random food dies off
